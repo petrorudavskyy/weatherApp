@@ -1,1 +1,8 @@
 <h2>Weather app</h2>
+<div *ngIf="loading">
+  <p>Location: {{data.timezone}}</p>
+  <p>Current temperature Far: {{data.currently.temperature}}</p>
+  <p>Current Cels: {{data.currently.temperature | temp}}</p>
+</div>
+<div id="map_canvas" style="width: 600px; height: 400px"></div>
+
