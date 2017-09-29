@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild,ElementRef } from '@angular
 import {WeatherService} from './services/weather.service';
 
 declare var google: any;
+declare var Skycons: any;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit{
   public geocoder;
   public map;
   public mapProp;
+  public location;
 
   constructor(private weatherServ: WeatherService) {
 
@@ -53,6 +55,16 @@ export class AppComponent implements OnInit{
         lng: position.coords.longitude
       };
 
+      //geocode for current position for whole location
+      this.geocoder.geocode({'location': pos}, (results, status) =>{
+        this.loading = true;
+        if (status === 'OK') {
+          this.location = results[1];
+        }
+      });
+
+
+
       //Center map on location and add location found
       infoWindow.setPosition(pos);
       infoWindow.setContent('Location found.');
@@ -63,9 +75,31 @@ export class AppComponent implements OnInit{
       this.weatherServ.requestDarkSky(this.latitude, this.longitude).subscribe(res => {
         this.loading = true;
         this.data = res;
-        console.log(this.data);
+        console.log(this.data.currently.icon);
+        this.setSktcons(this.data.currently.icon)
       });
+
+
     });
+  }
+
+  setSktcons(type) {
+    var skycons = new Skycons({"monochrome": false,
+      "colors": {
+        "main": "#333333",
+        "moon": "#78586F",
+        "fog": "#78586F",
+        "fogbank": "#B4ADA3",
+        "cloud": "#B4ADA3",
+        "snow": "#7B9EA8",
+        "leaf":"#7B9EA8",
+        "rain": "#7B9EA8",
+        "sun": "#FF8C42"
+      }
+    });
+    //add animation
+    skycons.add('icon1', type);
+    skycons.play();
   }
 }
 
