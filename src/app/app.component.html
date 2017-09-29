@@ -1,11 +1,15 @@
 <h2>Weather app</h2>
-<div *ngIf="loading">
-  <p>Location: {{data.timezone}}</p>
-  <p>Current temperature Far: {{data.currently.temperature}}</p>
-  <p>Current Cels: {{data.currently.temperature | temp}}</p>
-  <p>Current location: {{location.formatted_address}}</p>
-</div>
-<div id="spiner" *ngIf="!loading">
+<input #geo type="text" (keyup.enter)="onKey(geo.value)">
+<button (click)="onKey(geo.value)">click</button>
+<!--<div *ngIf="loading">-->
+  <!--<p>Location: {{data.timezone}}</p>-->
+  <!--<p>Current temperature Far: {{data.currently.temperature}}</p>-->
+  <!--<p>Current Cels: {{data.currently.temperature | temp}}</p>-->
+  <!--<p>Current location: {{location.formatted_address}}</p>-->
+<!--</div>-->
+
+<weather-component  [model]="data"></weather-component>
+<div id="spiner" *ngIf="loading">
   <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
   <span class="sr-only">Loading...</span>
 </div>

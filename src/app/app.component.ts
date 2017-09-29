@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild,ElementRef } from '@angular/core';
 import {WeatherService} from './services/weather.service';
 
+
 declare var google: any;
 declare var Skycons: any;
 @Component({
@@ -17,18 +18,22 @@ export class AppComponent implements OnInit{
   public longitude;
   public url = 'https://api.darksky.net/forecast/584af9729317fd49cf1621021267a76e/';
   public data;
-  public loading: boolean = false;
+  private loading: boolean;
 
   public geocoder;
   public map;
   public mapProp;
   public location;
+  public value = '';
+
 
   constructor(private weatherServ: WeatherService) {
 
   }
 
   ngOnInit() {
+    this.weatherServ.loading.subscribe((value: boolean) => this.loading = value);
+
     // google geocoder
     this.geocoder = new google.maps.Geocoder();
 
@@ -57,9 +62,10 @@ export class AppComponent implements OnInit{
 
       //geocode for current position for whole location
       this.geocoder.geocode({'location': pos}, (results, status) =>{
-        this.loading = true;
+
         if (status === 'OK') {
           this.location = results[1];
+          // this.model.location = results[1];
         }
       });
 
@@ -73,17 +79,15 @@ export class AppComponent implements OnInit{
       //call service to get weather data from darksky api
       //get data from longitude and latitude by geolocation
       this.weatherServ.requestDarkSky(this.latitude, this.longitude).subscribe(res => {
-        this.loading = true;
         this.data = res;
-        console.log(this.data.currently.icon);
-        this.setSktcons(this.data.currently.icon)
+        this.setSkycons(this.data.currently.icon);
       });
 
 
     });
   }
 
-  setSktcons(type) {
+  setSkycons(type) {
     var skycons = new Skycons({"monochrome": false,
       "colors": {
         "main": "#333333",
@@ -100,6 +104,37 @@ export class AppComponent implements OnInit{
     //add animation
     skycons.add('icon1', type);
     skycons.play();
+  }
+
+  onKey(value) {
+
+    let inputMap = this.map;
+
+    this.geocoder.geocode({'address': value}, (results, status) => {
+      if (status === 'OK') {
+        //get lat and long from input
+        let inputLatitude = results[0].geometry.bounds.f.b;
+        let inputLongitude = results[0].geometry.bounds.b.b;
+
+        //request darksky from input
+        this.weatherServ.requestDarkSky(inputLatitude,inputLongitude).subscribe(res => {
+          this.data = res;
+          console.log(res);
+          this.setSkycons(this.data.currently.icon);
+        });
+
+        //center map on location
+        inputMap.setCenter(results[0].geometry.location);
+
+        var marker = new google.maps.Marker({
+          map: inputMap,
+          position: results[0].geometry.location
+        });
+
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
   }
 }
 

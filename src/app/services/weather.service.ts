@@ -25,6 +25,8 @@ export class WeatherService {
         return res.json() || {};
       }).catch((error: any) => {
         return Observable.throw(error);
+      }).finally(() => {
+        this.loading.next(false)
       });
   }
 

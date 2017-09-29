@@ -11,10 +11,13 @@ import { AppComponent } from './app.component';
 //temperature pipe
 import {TemperaturePipe} from './pipes/temperature.pipe';
 
+import {WeatherComponent} from './weather/weather.component';
+
 @NgModule({
   declarations: [
     AppComponent,
-    TemperaturePipe
+    TemperaturePipe,
+    WeatherComponent
   ],
   imports: [
     BrowserModule,
