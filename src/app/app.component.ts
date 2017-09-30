@@ -18,7 +18,7 @@ export class AppComponent implements OnInit{
   public longitude;
   public url = 'https://api.darksky.net/forecast/584af9729317fd49cf1621021267a76e/';
   public data;
-  private loading: boolean;
+  public loading: boolean;
 
   public geocoder;
   public map;
